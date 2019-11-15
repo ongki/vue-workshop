@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="assets/style.css" />
+    <script src="assets/vue.js"></script>
+    <title>Invoice Generator</title>
+  </head>
+  <body>
+    <div class="invoice-box">
+      <table cellpadding="0" cellspacing="0">
+        <tr class="top">
+          <td colspan="4">
+            <table>
+              <tr>
+                <td class="title">
+                  <img
+                    src="assets/logo.png"
+                    style="width:100%; max-width:300px;"
+                  />
+                </td>
+
+                <td>
+                  Invoice #: 123<br />
+                  Created: January 1, 2015<br />
+                  Due: February 1, 2015
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr class="information">
+          <td colspan="4">
+            <table>
+              <tr>
+                <td>
+                  Sparksuite, Inc.<br />
+                  12345 Sunny Road<br />
+                  Sunnyville, CA 12345
+                </td>
+
+                <td>
+                  Acme Corp.<br />
+                  John Doe<br />
+                  john@example.com
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr class="heading">
+          <td colspan="3">Payment Method</td>
+          <td>Cheque #</td>
+        </tr>
+
+        <tr class="details">
+          <td colspan="3">{{ paymentMethod }}</td>
+          <td>1000</td>
+        </tr>
+
+        <tr class="heading">
+          <td>Item</td>
+          <td>Unit Cost</td>
+          <td>Quantity</td>
+          <td>Price</td>
+        </tr>
+
+        <tr class="item" v-for="item in items">
+          <td><input type="text" v-model="item.description" /></td>
+          <td>$<input type="number" v-model="item.unitPrice" /></td>
+          <td><input type="number" v-model="item.quantity" /></td>
+          <td>${{ item.unitPrice * item.quantity | currency }} </td>
+        </tr>
+
+        <tr>
+          <td><button @click="addRow">Add Item</button></td>
+        </tr>
+
+        <tr class="total">
+          <td colspan="3"></td>
+          <td>Total: ${{ total | currency }}</td>
+        </tr>
+      </table>
+    </div>
+
+    <script>
+      const app = new Vue({
+        el: '.invoice-box',
+        data: {
+          paymentMethod: 'Credit Card',
+          items: [
+            { description: 'Domain Registration', unitPrice: 20, quantity:2 },
+            { description: 'Site Design', unitPrice: 3000, quantity: 1 },
+            { description: 'Coffee', unitPrice: 3.5, quantity: 4 },
+          ]
+        },
+        computed: {
+          total() {
+            return this.items.reduce((acc, item) => acc + item.unitPrice * item.quantity, 0);
+
+            //return this.items.reduce(function(acc, item) {
+            //  return acc + item.unitPrice * item.quantity;
+            //}, 0);
+          }
+        },
+        filters: {
+          currency(value) {
+            return value.toFixed(2);
+          }
+        },
+        methods: {
+          addRow() {
+            this.items.push({ description: '', unitPrice: 0, quantity: 0 })
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
